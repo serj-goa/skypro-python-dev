@@ -78,16 +78,29 @@ def remove_old_letters(word: str, letters: list) -> None:
         letters.remove(ltr)
 
 
-def show_score(player_name: str, game_score: dict) -> None:
+def show_score(player_1: str, player_2: str, game_score: dict) -> None:
     """
     Prints game results to console.
     """
+    player_1_score = game_score.get(player_1, 0)
+    player_2_score = game_score.get(player_2, 0)
+
     if not game_score:
         print('\nСпасибо за игру, до встречи!')
 
+    elif player_1_score > player_2_score:
+        print(f'\nПоздравляем, выигрывает {player_1}.\nСчёт ', end='')
+        print(f'{player_1_score} : {player_2_score}')
+        print('\nСпасибо за игру, до скорой встречи!')
+
+    elif player_1_score < player_2_score:
+        print(f'\nПоздравляем, выигрывает {player_2}.\nСчёт ', end='')
+        print(f'{player_1_score} : {player_2_score}')
+        print('\nСпасибо за игру, до скорой встречи!')
+
     else:
-        print(f'\nВыигрывает {player_name}.\nСчёт ', end='')
-        print(*list(game_score.values()), sep=' : ')
+        print(f'\n{player_1} и {player_2} поздравляем с ничьёй!\nСчёт ', end='')
+        print(f'{player_1_score} : {player_2_score}')
         print('\nСпасибо за игру, до скорой встречи!')
 
 
@@ -124,7 +137,7 @@ def main():
 
         if player_answer in STOP_WORDS:
             run = False
-            show_score(current_player, game_score)
+            show_score(player_1, player_2, game_score)
             continue
 
         cor_player_word = is_correct_word(player_answer, current_player_letters)
@@ -150,7 +163,7 @@ def main():
 
         if not GAME_LETTERS:
             run = False
-            show_score(current_player, game_score)
+            show_score(player_1, player_2, game_score)
 
 
 if __name__ == '__main__':

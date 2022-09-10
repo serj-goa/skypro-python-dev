@@ -146,6 +146,10 @@ def main():
             remove_old_letters(player_answer, current_player_letters)
 
             new_ltrs_cnt += len(player_answer)
+
+            if new_ltrs_cnt > sum(GAME_LETTERS.values()):
+                new_ltrs_cnt = sum(GAME_LETTERS.values())
+
             new_ltrs = get_uniq_letters(new_ltrs_cnt)
             current_player_letters.extend(new_ltrs)
 

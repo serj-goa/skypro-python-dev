@@ -1,5 +1,6 @@
 from collections import Counter
 from random import shuffle
+from string import hexdigits, punctuation
 
 
 GAME_LETTERS = {
@@ -9,7 +10,7 @@ GAME_LETTERS = {
     "ч": 1, "ш": 1, "щ": 1, "ъ": 1, "ы": 2, "ь": 2, "э": 1, "ю": 1, "я": 2
 }
 SCORE = {3: 3, 4: 6, 5: 7, 6: 8, 7: 9}  # 7 letters = 9 points
-STOP_WORDS = ('stop', 'стоп')
+STOP_WORDS = ('stop', 'close')
 
 
 def add_player_score(game_score: dict, player_name: str, player_score: int) -> None:
@@ -30,6 +31,20 @@ def get_all_words(filepath: str) -> list:
     with open(filepath, 'r', encoding='utf-8') as fh:
         all_words = list(map(lambda word: word.strip(), fh.readlines()))
         return all_words
+
+
+def get_player_answer(player_name: str) -> str:
+    """
+    Handles player input as required.
+    """
+    while True:
+        player_answ = input('Напишите слово: ').strip().lower()
+        incorrect_chars = any(list(filter(lambda ch: ch in hexdigits or ch in punctuation, player_answ)))
+
+        if not incorrect_chars or player_answ in STOP_WORDS:
+            return player_answ
+
+        print(f'{player_name} введите слово используя только кирилицу.\n')
 
 
 def get_uniq_letters(ltr_count: int) -> list:
@@ -133,7 +148,8 @@ def main():
         step += 1
 
         print(f'\nХодит {current_player} - буквы: \"{", ".join(current_player_letters)}\"')
-        player_answer = input('Напишите слово: ').strip()
+        player_answer = get_player_answer(current_player)
+        # player_answer = input('Напишите слово: ').strip()
 
         if player_answer in STOP_WORDS:
             run = False

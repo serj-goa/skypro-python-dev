@@ -3,14 +3,17 @@ from random import shuffle
 from string import hexdigits, punctuation
 
 
-GAME_LETTERS = {
-    "а": 8, "б": 2, "в": 4, "г": 2, "д": 4, "е": 8, "ё": 1, "ж": 1,
-    "з": 2, "и": 5., "й": 1, "к": 4, "л": 4, "м": 3, "н": 5, "о": 10,
-    "п": 4, "р": 5, "с": 5, "т": 5, "у": 4, "ф": 1, "х": 1, "ц": 1,
-    "ч": 1, "ш": 1, "щ": 1, "ъ": 1, "ы": 2, "ь": 2, "э": 1, "ю": 1, "я": 2
+LETTERS_DATA = {
+    "а": (8, 1), "б": (2, 3), "в": (4, 1), "г": (2, 3), "д": (4, 2), "е": (8, 1),
+    "ё": (1, 3), "ж": (1, 5), "з": (2, 5), "и": (5, 1), "й": (1, 4), "к": (4, 2),
+    "л": (4, 2), "м": (3, 2), "н": (5, 1), "о": (10, 1), "п": (4, 2), "р": (5, 1),
+    "с": (5, 1), "т": (5, 1), "у": (4, 2), "ф": (1, 10), "х": (1, 5), "ц": (1, 5),
+    "ч": (1, 5), "ш": (1, 8), "щ": (1, 10), "ъ": (1, 10), "ы": (2, 4), "ь": (2, 3),
+    "э": (1, 8), "ю": (1, 8), "я": (2, 3)
 }
 SCORE = {3: 3, 4: 6, 5: 7, 6: 8, 7: 9}  # 7 letters = 9 points
-STOP_WORDS = ('stop', 'close')
+STOP_WORDS = ('close', 'quit', 'stop')
+game_letters = {letter: data[0] for letter, data in LETTERS_DATA.items() if data[0] > 0}
 
 
 def add_player_score(game_score: dict, player_name: str, player_score: int) -> None:
@@ -47,25 +50,40 @@ def get_player_answer(player_name: str) -> str:
         print(f'{player_name} введите слово используя только кирилицу.\n')
 
 
+def get_player_points(player_answer: str):
+    """
+    Calculates user points.
+    """
+
+    letter_points = 0
+
+    for ltr in player_answer:
+        letter_points += LETTERS_DATA[ltr][1]
+
+    player_score = SCORE[len(player_answer)] + letter_points
+
+    return player_score
+
+
 def get_uniq_letters(ltr_count: int) -> list:
     """
     Gets unique letters for the player.
     """
-    game_letters = []
+    available_letters = []
 
     for i in range(ltr_count):
-        all_letters = list(GAME_LETTERS.keys())
+        all_letters = list(game_letters.keys())
         shuffle(all_letters)
 
         ltr = all_letters.pop()
 
-        game_letters.append(ltr)
-        GAME_LETTERS[ltr] -= 1
+        available_letters.append(ltr)
+        game_letters[ltr] -= 1
 
-        if not GAME_LETTERS[ltr]:
-            del GAME_LETTERS[ltr]
+        if not game_letters[ltr]:
+            del game_letters[ltr]
 
-    return game_letters
+    return available_letters
 
 
 def is_correct_word(word: str, letters: list) -> bool:
@@ -149,7 +167,6 @@ def main():
 
         print(f'\nХодит {current_player} - буквы: \"{", ".join(current_player_letters)}\"')
         player_answer = get_player_answer(current_player)
-        # player_answer = input('Напишите слово: ').strip()
 
         if player_answer in STOP_WORDS:
             run = False
@@ -163,13 +180,13 @@ def main():
 
             new_ltrs_cnt += len(player_answer)
 
-            if new_ltrs_cnt > sum(GAME_LETTERS.values()):
-                new_ltrs_cnt = sum(GAME_LETTERS.values())
+            if new_ltrs_cnt > sum(game_letters.values()):
+                new_ltrs_cnt = sum(game_letters.values())
 
             new_ltrs = get_uniq_letters(new_ltrs_cnt)
             current_player_letters.extend(new_ltrs)
 
-            player_score = SCORE[len(player_answer)]
+            player_score = get_player_points(player_answer)
             add_player_score(game_score, current_player, player_score)
 
             print('Такое слово есть.')
@@ -181,7 +198,7 @@ def main():
             new_ltrs = get_uniq_letters(new_ltrs_cnt)
             current_player_letters.extend(new_ltrs)
 
-        if not GAME_LETTERS:
+        if not game_letters:
             run = False
             show_score(player_1, player_2, game_score)
 

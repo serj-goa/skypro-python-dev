@@ -36,18 +36,28 @@ def get_all_words(filepath: str) -> list:
         return all_words
 
 
-def get_player_answer(player_name: str) -> str:
+def get_player_answer(player_name: str, player_letters) -> str:
     """
     Handles player input as required.
     """
     while True:
-        player_answ = input('Напишите слово: ').strip().lower()
+        print('Напишите слово или нажмите Ввод чтобы пропустить ход:')
+        player_answ = input('>>> ').strip().lower()
         incorrect_chars = any(list(filter(lambda ch: ch in hexdigits or ch in punctuation, player_answ)))
+        extra_letter = any(list(filter(lambda ch: ch not in player_letters, player_answ)))
 
-        if not incorrect_chars or player_answ in STOP_WORDS:
+        if player_answ in STOP_WORDS:
             return player_answ
 
-        print(f'{player_name} введите слово используя только кирилицу.\n')
+        elif incorrect_chars:
+            print(f'{player_name} введите слово используя только кирилицу.\n')
+            continue
+
+        elif extra_letter:
+            print(f'{player_name}, можно использовать только те буквы, которые Вам выпали при раздаче.\n')
+            continue
+
+        return player_answ
 
 
 def get_player_points(player_answer: str):
@@ -166,7 +176,7 @@ def main():
         step += 1
 
         print(f'\nХодит {current_player} - буквы: \"{", ".join(current_player_letters)}\"')
-        player_answer = get_player_answer(current_player)
+        player_answer = get_player_answer(current_player, current_player_letters)
 
         if player_answer in STOP_WORDS:
             run = False

@@ -5,6 +5,9 @@ STOP_WORDS = ('close', 'quit', 'stop')
 
 
 def check_fitness(student: list, profession: list) -> dict:
+    """
+    Analysis of the student's indicators for the chosen profession.
+    """
     student_skills = set(student['skills'])
     prof_skills = set(profession['skills'])
 
@@ -30,6 +33,9 @@ def get_value_by_key(kw: str, user_value: str or int, db: list):
 
 
 def get_pk_from_user(all_students: list) -> int:
+    """
+    Obtaining a student key from a user.
+    """
     while True:
         print('Введите номер студента')
         student_number = input('>>> ').strip()
@@ -50,6 +56,9 @@ def get_pk_from_user(all_students: list) -> int:
 
 
 def get_profession_from_user(student_name: str, profession_name: list, all_professions: list) -> str:
+    """
+    Getting a profession title from a user.
+    """
     while True:
         print(f'Выберите специальность ({", ".join(profession_name)}) для оценки студента {student_name}')
         profession = input('>>> ').strip().title()
@@ -85,24 +94,27 @@ def load_data(filepath: str) -> list:
 
 
 def show_result(student: list, profession: list) -> None:
+    """
+    Displays the results of calculations based on the data entered by the user.
+    """
     total_data = check_fitness(student, profession)
     student_has = total_data["has"]
     student_lacks = total_data["lacks"]
     percent = total_data["fit_percent"]
 
     if percent == 100:
-        print(f'\nПригодность {total_data["fit_percent"]}%')
+        print(f'\nПригодность {percent}%')
         print(f'{student["full_name"]} владеет всеми необходимыми навыками.\n')
 
     elif not student_has:
-        print(f'\nПригодность {total_data["fit_percent"]}%')
+        print(f'\nПригодность {percent}%')
         print(f'{student["full_name"]} не владеет навыками из выбранной профессии.')
-        print(f'Необходимо будет изучить: {", ".join(total_data["lacks"])}\n')
+        print(f'Необходимо будет изучить: {", ".join(student_lacks)}\n')
 
     else:
-        print(f'\nПригодность {total_data["fit_percent"]}%')
-        print(f'{student["full_name"]} знает: {", ".join(total_data["has"])}')
-        print(f'{student["full_name"]} не знает: {", ".join(total_data["lacks"])}\n')
+        print(f'\nПригодность {percent}%')
+        print(f'{student["full_name"]} знает: {", ".join(student_has)}')
+        print(f'{student["full_name"]} не знает: {", ".join(student_lacks)}\n')
 
 
 def main():

@@ -58,10 +58,7 @@ def is_valid_login(student_data: dict) -> bool:
     # The full regex looks unreadable, implicit, and complex, which goes against Python's principles.
     # regexp = r"(?=.*\d)(?=.*[a-z])(?=.*[.,/?`~!@#$%^&*()\-_+='\":;])(?=^[^A-Z].*[A-Z])(?=.+[a-zA-Z\d]$).{4,}"
     #
-    # if search(regexp, student_login):
-    #     return True
-    #
-    # return False
+    # return True if search(regexp, student_login) else False
 
     # 1.Первая буква не может быть заглавной и 2.Знаки (помимо букв и цифр) не могут быть последними
     if not (search(r'^[^A-Z].{2,}[a-zA-Z\d]$', student_login)):

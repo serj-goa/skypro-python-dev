@@ -1,8 +1,14 @@
+from storages import Shop, Store
 from utils import get_user_text
+
+from typing import Union
 
 
 class Request:
-    def __init__(self, from_, to, product=None, amount=3):
+    """
+    Handles basic logistical requests between storages.
+    """
+    def __init__(self, from_: Union[Shop, Store], to: Union[Shop, Store], product=None, amount=3) -> None:
         self.from_ = from_
         self.to = to
         self.product = product
@@ -13,10 +19,20 @@ class Request:
 
     @staticmethod
     def is_agree_user() -> bool:
-        user_answer = get_user_text()
+        """
+        Validates the user's decision.
+        :return: bool
+        """
+        user_answer: str = get_user_text()
         return True if user_answer == 'да' else False
 
-    def sell_products(self, product_name: str, cnt: int):
+    def sell_products(self, product_name: str, cnt: int) -> None:
+        """
+        Decommissions an item from storage.
+        :param product_name: str
+        :param cnt: int
+        :return: None
+        """
         if product_name not in self.from_.items:
             print('Указанного товара нет в наличии.')
 
@@ -37,12 +53,18 @@ class Request:
             else:
                 print(f'\nПродажа товара {product_name} : {cnt} - отменена.\n')
 
-    def send_products(self, product_name: str, cnt: int):
-        data = self.to.get_free_space()
+    def send_products(self, product_name: str, cnt: int) -> None:
+        """
+        Makes the movement of goods between storages.
+        :param product_name: str
+        :param cnt: int
+        :return: None
+        """
+        data: tuple = self.to.get_free_space()
 
-        msg = data[0]
-        free_uniq_items = data[1]
-        free_volume = data[2]
+        msg: str = data[0]
+        free_uniq_items: int = data[1]
+        free_volume: int = data[2]
 
         if product_name not in self.from_.items:
             print('Указанного товара нет в наличии.')
@@ -54,7 +76,7 @@ class Request:
             print(msg)
 
         elif cnt > free_volume:
-            remainder_product = cnt - free_volume
+            remainder_product: int = cnt - free_volume
 
             print(f'\nВы отправляете товара больше, чем доступно свободного места.\n'
                   f'Хотите чтобы {self.to.name} принял {free_volume} ({product_name}), '

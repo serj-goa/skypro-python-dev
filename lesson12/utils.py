@@ -5,7 +5,7 @@ from typing import Union
 STOP_WORDS = ('close', 'quit', 'stop')
 
 
-def show_start_menu():
+def show_start_menu() -> None:
     print('''-------------------------------------------
     [1] отправить товар со склада в магазин.
     [2] вернуть товар из магазина на склад.

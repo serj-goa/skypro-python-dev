@@ -2,7 +2,7 @@ from interfaces.storage_interface import Storage
 
 
 class Shop(Storage):
-    def __init__(self, shop_name: str, items=None, capacity=20):
+    def __init__(self, shop_name: str, items=None, capacity=20) -> None:
         if items is None:
             items = {}
         self.items = items
@@ -18,8 +18,14 @@ class Shop(Storage):
     def shop_volume(self):
         return self.__shop_volume
 
-    def add(self, name, cnt):
-        current_volume = sum(list(self.items.values()))
+    def add(self, name: str, cnt: int) -> str:
+        """
+        Add a product to the shop store.
+        :param name: str
+        :param cnt: int
+        :return: str
+        """
+        current_volume: int = sum(list(self.items.values()))
 
         if (cnt + current_volume) > self.capacity:
             return f'Для получения товара в магазине недостаточно свободного места.'
@@ -28,29 +34,40 @@ class Shop(Storage):
             return f'Не возможно расширить ассортимент в магазине, достигнут предел уникальных товаров.'
 
         self.items[name] = self.items.get(name, 0) + cnt
+
         return f'Магазин принял {name} в количестве {cnt} шт.'
 
-    def remove(self, name, cnt):
+    def remove(self, name: str, cnt: int) -> None:
+        """
+        Removes an item from the shop storage.
+        :param name: str
+        :param cnt: int
+        :return: None
+        """
         if self.items[name] == cnt:
             del self.items[name]
         else:
             self.items[name] -= cnt
 
-    def get_free_space(self):
-        current_volume = sum(list(self.items.values()))
+    def get_free_space(self) -> tuple:
+        """
+        Checks free space in shop storage.
+        :return: tuple
+        """
+        current_volume: int = sum(list(self.items.values()))
 
         if not current_volume:
             msg = f'\nСвободных мест в магазине - {self.capacity}\n'
-            uniq_product = self.shop_volume
-            product_capacity = self.capacity
+            uniq_product: int = self.shop_volume
+            product_capacity: int = self.capacity
 
             return msg, uniq_product, product_capacity
 
         elif current_volume == self.capacity:
             return '\nВ магазине нет свободного места.\n', 0, 0
 
-        free_uniq_items = self.shop_volume - len(self.items)
-        free_volume = self.capacity - current_volume
+        free_uniq_items: int = self.shop_volume - len(self.items)
+        free_volume: int = self.capacity - current_volume
         msg = f'\nСвободных мест в магазине - {free_volume}\n'
 
         if free_uniq_items:
@@ -59,7 +76,11 @@ class Shop(Storage):
 
         return msg, free_uniq_items, free_volume
 
-    def get_items(self):
+    def get_items(self) -> str:
+        """
+        Forms a string with the products available in the shop storage.
+        :return: str
+        """
         if not self.items:
             return 'В магазине нет товаров.'
 
@@ -67,9 +88,14 @@ class Shop(Storage):
 
         for product, cnt in self.items.items():
             all_products += f'\n\t{product} : {cnt}'
+
         return all_products
 
-    def get_unique_items_count(self):
+    def get_unique_items_count(self) -> str:
+        """
+        Generates a string with the number of unique products available in the shop store.
+        :return: str
+        """
         if not self.items:
             return 'В магазине нет товаров.'
 
@@ -94,8 +120,14 @@ class Store(Storage):
     def shop_volume(self):
         return self.__shop_volume
 
-    def add(self, name, cnt):
-        current_volume = sum(list(self.items.values()))
+    def add(self, name: str, cnt: int) -> str:
+        """
+        Add a product to the store.
+        :param name: str
+        :param cnt: int
+        :return: str
+        """
+        current_volume: int = sum(list(self.items.values()))
 
         if (cnt + current_volume) > self.capacity:
             return f'Для получения товара на складе недостаточно свободного места.\n'
@@ -103,19 +135,29 @@ class Store(Storage):
         self.items[name] = self.items.get(name, 0) + cnt
         return f'Склад принял {name} в количестве {cnt} шт.\n'
 
-    def remove(self, name, cnt):
+    def remove(self, name: str, cnt: int) -> None:
+        """
+        Removes an item from the storage.
+        :param name: str
+        :param cnt: int
+        :return: None
+        """
         if self.items[name] == cnt:
             del self.items[name]
         else:
             self.items[name] -= cnt
 
-    def get_free_space(self):
-        current_volume = sum(list(self.items.values()))
+    def get_free_space(self) -> tuple:
+        """
+        Checks free space in the storage.
+        :return: tuple
+        """
+        current_volume: int = sum(list(self.items.values()))
 
         if not current_volume:
             msg = f'\nНа складе {self.capacity} свободных мест.'
-            uniq_product = self.shop_volume
-            product_capacity = self.capacity
+            uniq_product: int = self.shop_volume
+            product_capacity: int = self.capacity
 
             return msg, uniq_product, product_capacity
 
@@ -123,12 +165,16 @@ class Store(Storage):
             return '\nНа складе нет свободного места.', 0, 0
 
         free_uniq_items = 1
-        free_volume = self.capacity - current_volume
+        free_volume: int = self.capacity - current_volume
         msg = f'\nСвободных мест на складе - {self.capacity - current_volume}'
 
         return msg, free_uniq_items, free_volume
 
-    def get_items(self):
+    def get_items(self) -> str:
+        """
+        Forms a string with the products available in the storage.
+        :return: str
+        """
         if not self.items:
             return 'На складе нет товаров.'
 
@@ -136,9 +182,14 @@ class Store(Storage):
 
         for product, cnt in self.items.items():
             all_products += f'\n\t{product} : {cnt}'
+
         return all_products
 
-    def get_unique_items_count(self):
+    def get_unique_items_count(self) -> str:
+        """
+        Generates a string with the number of unique products available in the store.
+        :return: str
+        """
         if not self.items:
             return 'На складе нет товаров.'
 

@@ -6,13 +6,13 @@ STOP_WORDS = ('close', 'quit', 'stop')
 
 
 def main():
-    all_products = load_data('data/products.json')
+    all_products: dict = load_data('data/products.json')
 
     print('\nДобро пожаловать в тестовую версию логистического бота.\n')
 
     print('Давайте создадим склад.')
     print('Введите название оптового склада:')
-    store_name = get_user_text()
+    store_name: str = get_user_text()
 
     store = Store(store_name=store_name, items=all_products)
     print(f'На склад {store_name} отправлены товары.\n')
@@ -20,7 +20,7 @@ def main():
 
     print('\nДавайте создадим магазин.')
     print('Введите название магазина:')
-    shop_name = get_user_text()
+    shop_name: str = get_user_text()
 
     shop = Shop(shop_name=shop_name)
 
@@ -39,17 +39,17 @@ def main():
     while True:
         print('\nВыберите номер команды из списка:')
         show_start_menu()
-        user_choice = get_user_number(limit=len(commands))
+        user_choice: int = get_user_number(limit=len(commands))
 
         if user_choice in STOP_WORDS:
             break
 
         elif user_choice < 5:
             print('\nВведите наименование товара (апельсины/бананы...):')
-            product_name = get_user_text()
+            product_name: str = get_user_text()
 
             print('\nВведите количество товара:')
-            product_count = get_user_number()
+            product_count: int = get_user_number()
 
             commands[user_choice](product_name, product_count)  # type: Request
 

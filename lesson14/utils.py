@@ -14,7 +14,7 @@ def command_filter(kw: str, some_data: List[str]) -> list:
     return []
 
 
-def command_limit(kw: int):
+def command_limit(kw: int) -> int:
     """
     Returns the value of the counter to get the required amount of data.
     """
@@ -73,6 +73,18 @@ COMMANDS = {
 }
 
 
+def get_count_number(data: str) -> int:
+    """
+    Gets the counter number.
+    """
+
+    try:
+        return int(data)
+
+    except ValueError:
+        return -1
+
+
 def get_user_data(stop_words='stop', kw='|') -> str:
     """
     Getting a command from the user.
@@ -93,9 +105,7 @@ def get_user_data(stop_words='stop', kw='|') -> str:
             print('Программа принимает не более двух команд. Пожалуйста повторите свой запрос.\n')
             continue
 
-        is_valid = is_valid_data(text=some_data)
-
-        if not is_valid:
+        if not is_valid_data(text=some_data):
             continue
 
         return some_data
@@ -103,7 +113,7 @@ def get_user_data(stop_words='stop', kw='|') -> str:
 
 def get_file_generator(filepath: str):
     """
-    Obtaining a generator from a file descriptor.
+    Getting a generator from a file descriptorObtaining a generator from a file descriptor.
     """
 
     with open(filepath, 'r', encoding='utf-8') as file:
@@ -172,62 +182,47 @@ def parse_string(string: str) -> List[str]:
     return [ip_addr, time_data, log_data]
 
 
-def run_command(data: tuple, filepath: str = None, data_logs: list = None) -> List[str]:
+def run_command(cmd_name: str, cmd_argument: str, filepath: str = None, data_log: list = None) -> list:
     """
     Run commands that will process the data and generate a list.
     """
 
-    command = COMMANDS[data[0]]
-    cmd_argument = data[1]
-    cnt_iter = None
-
-    if data[0] == 'limit':
-        try:
-            cnt_iter = int(data[1])
-
-        except ValueError:
-            cnt_iter = -1
-
-    flag = True if data[0] in ('filter', 'map') else False
-    log_parse = False
+    iter_counter = get_count_number(cmd_argument) if cmd_name == 'limit' else None
+    flag = True if cmd_name in ('filter', 'map') else False
+    parse_data_by_string = False
     result_data = []
 
-    if data_logs is None:
-        data_logs = get_file_generator(filepath)
-        log_parse = True
+    if data_log is None:
+        data_log = get_file_generator(filepath)
+        parse_data_by_string = True
 
-    for log in data_logs:
+    for log in data_log:
 
-        if cnt_iter == 0:
+        if iter_counter == 0:
             break
 
-        elif cnt_iter is not None:
-            cnt_iter = command(kw=cnt_iter)
+        elif iter_counter is not None:
+            iter_counter = COMMANDS[cmd_name](kw=iter_counter)
 
-        if log_parse:
+        if parse_data_by_string:
             log = parse_string(string=log)  # List[str]
 
         if flag:
-            log = command(kw=cmd_argument, some_data=log)  # List[str]
+            log = COMMANDS[cmd_name](kw=cmd_argument, some_data=log)  # List[str]
 
         if log:
             result_data.append(log)
 
-    if data[0] in ('unique', 'sort'):
-        result_data = command(kw=cmd_argument, some_data=result_data)
-
     return result_data
 
 
-def run_sort_command(data: tuple, data_logs: list) -> List[str]:
+# def run_sort_command(data: tuple, data_log: list) -> list:
+def run_sort_command(cmd_name: str, cmd_argument: str, data_log: list) -> list:
     """
     Run commands that work with the collected data.
     """
 
-    command = COMMANDS[data[0]]
-    cmd_argument = data[1]
-
-    return command(kw=cmd_argument, some_data=data_logs)
+    return COMMANDS[cmd_name](kw=cmd_argument, some_data=data_log)
 
 
 def show_result(data_logs: list) -> None:

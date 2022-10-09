@@ -17,20 +17,31 @@ def main():
 
         user_data: List[Tuple] = parse_command(user_input)  # [(command, argument)]
 
-        result_log = run_command(filepath=log_file, data=user_data[0])
+        cmd_name = user_data[0][0]
+        cmd_argument = user_data[0][1]
+
+        result_log = run_command(cmd_name, cmd_argument, filepath=log_file)
+
+        if cmd_name in ('unique', 'sort'):
+            result_log = run_sort_command(cmd_name, cmd_argument, data_log=result_log)
 
         if len(user_data) == 2:
-            if user_data[1][0] in ('filter', 'limit', 'map',):
-                result_log = run_command(data=user_data[1], data_logs=result_log)
+
+            cmd_name = user_data[1][0]
+            cmd_argument = user_data[1][1]
+
+            if cmd_name in ('filter', 'limit', 'map',):
+                result_log = run_command(cmd_name, cmd_argument, data_log=result_log)
 
             else:
-                result_log = run_sort_command(data=user_data[1], data_logs=result_log)
+                result_log = run_sort_command(cmd_name, cmd_argument, data_log=result_log)
 
         show_result(result_log)
         print()
 
 
 if __name__ == '__main__':
+
     try:
         main()
 

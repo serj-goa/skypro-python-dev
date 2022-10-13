@@ -1,0 +1,5 @@
+HOST_PG = '127.0.0.1'
+NAME_DB = 'test_db'
+PORT_PG = '5432'
+PSW_PG = '111'
+USER_PG = 'postgres'

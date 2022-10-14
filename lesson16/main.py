@@ -1,14 +1,17 @@
-from settings import HOST_PG, NAME_DB, PORT_PG, PSW_PG, USER_PG
+from connections import db_connection
 from utils import get_user_number, run_user_choice, show_program_menu
-
-from psycopg2 import connect, Error
 
 
 def main() -> None:
-    try:
-        db_connection = connect(user=USER_PG, password=PSW_PG, host=HOST_PG, port=PORT_PG, database=NAME_DB)
-        cursor = db_connection.cursor()
 
+    connection, cursor = db_connection()
+
+    if cursor is None:
+        print(connection)  # If the connection fails, the variable contains the error message.
+
+        return None
+
+    try:
         while True:
 
             show_program_menu()
@@ -18,14 +21,18 @@ def main() -> None:
             if not run:
                 break
 
-    except (Exception, Error) as error:
-        print(error)
+    except KeyboardInterrupt:
+        print('The program has been completed.')
+
+    except Exception as error:
+        print(f'Unexpected error!\n{error}')
 
     finally:
-        if db_connection:
 
-            db_connection.close()
-            cursor.close()
+        cursor.close()
+        connection.close()
+
+    print('Good Bye!')
 
 
 if __name__ == '__main__':

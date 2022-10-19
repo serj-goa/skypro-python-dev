@@ -34,6 +34,17 @@ ALL_TABLE_REQUESTS = {
                     'FOREIGN KEY (fk_outcome_type) REFERENCES outcome_types (fk_id)'
 }
 
+ALL_USERS_REQUESTS = {
+    'user_1': """
+            CREATE USER user_1;
+            GRANT role_one TO user_1
+            """,
+    'user_2': """
+            CREATE USER user_2;
+            GRANT role_two TO user_2
+        """
+}
+
 
 def generate_table_request(table_name: str, values: str) -> str:
     return f'CREATE TABLE IF NOT EXISTS {table_name} ({values})'

@@ -1,10 +1,31 @@
 from connections import close_db_connection, db_connection, start_query_execution
-from requests_db import ALL_TABLE_REQUESTS, generate_table_request, req_insert_animals, req_insert_animal_breeds, \
+from requests_db import ALL_TABLE_REQUESTS, ALL_USERS_REQUESTS, generate_table_request, req_insert_animals, req_insert_animal_breeds, \
                         req_insert_animal_colors, req_insert_outcome_subtypes, req_insert_outcome_types, \
                         req_insert_shelter_info
 from settings import ANIMALS_DB
 
 from csv import DictReader
+from psycopg2 import connect
+
+
+def add_users_to_db(name_db: str) -> str:
+    """
+    Adds users to the database.
+    """
+
+    connection, cursor = db_connection(user_db=name_db)
+
+    try:
+        for user_name, user_request in ALL_USERS_REQUESTS.items():
+            start_query_execution(cursor, some_query=user_request)
+
+        return 'The users has been successfully added to the database.'
+
+    except Exception as error:
+        return f'An error occurred while adding the {user_name}!\n{error}\n'
+
+    finally:
+        print(close_db_connection(connection, cursor))
 
 
 def create_db(name_db: str) -> str:

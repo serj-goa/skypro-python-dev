@@ -1,0 +1,9 @@
+<table>
+     {% for course in courses %}
+        {% if course.id == id %}
+            <p> id = {{ course.id }} </p>
+
+            <p> name = {{ course.name }} </p>
+        {% endif %}
+     {% endfor %}
+ </table>

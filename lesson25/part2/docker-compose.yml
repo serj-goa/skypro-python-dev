@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  app:
+    build: ../part2
+    depends_on:
+      redis:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  worker:
+    build: ../part3
+    depends_on:
+      redis:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  redis:
+    container_name: my_redis
+    image: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
